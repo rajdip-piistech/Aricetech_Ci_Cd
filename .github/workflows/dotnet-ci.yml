@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
@@ -22,19 +22,22 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Restore Dependencies
-        run: dotnet restore
+        run: dotnet restore WebApplication1.sln
 
-      - name: Build Solution
-        run: dotnet build --configuration Release --no-restore
+      - name: Build WebApplication1
+        run: dotnet build --configuration Release --no-restore WebApplication1/WebApplication1.csproj
+
+      - name: Build TestProject1
+        run: dotnet build --configuration Release --no-restore TestProject1/TestProject1.csproj
 
       - name: Run Tests
-        run: dotnet test --configuration Release --no-restore --verbosity normal
+        run: dotnet test --configuration Release --no-restore --verbosity normal TestProject1/TestProject1.csproj
 
-      - name: Publish Application
-        run: dotnet publish -c Release -o ./publish
+      - name: Publish WebApplication1
+        run: dotnet publish -c Release -o ./publish WebApplication1/WebApplication1.csproj
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4  # ✅ Updated to v4
+      - name: Upload Published Web Application
+        uses: actions/upload-artifact@v4
         with:
-          name: published-app
+          name: published-webapp
           path: ./publish
